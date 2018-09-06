@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.io import wavfile
 
-output_name = 'sine.wav'
+output_name = 'data/sine.wav'
 sample_rate = 16000
 sin_frequencies = [20, 200, 2000]
 duration = 1

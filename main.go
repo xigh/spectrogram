@@ -25,11 +25,12 @@ var (
 
 	OUT = flag.String("out", "out.png", "set output filename")
 
+	HAMMING = flag.Bool("hamming", false, "use hamming window")
+
 	DFT = flag.Bool("dft", false, "use dft instead of fft")
 
 	BG0 = flag.String("BG0", "000000", "set background color 0")
-	BG1 = flag.String("BG1", "444444", "set background color 1")
-	BG2 = flag.String("BG2", "447744", "set background color 2")
+	BG1 = flag.String("BG1", "445577", "set background color 1")
 
 	FG0 = flag.String("FG0", "0972a2", "set forground color 0")
 	FG1 = flag.String("FG1", "6b5f7e", "set forground color 1")

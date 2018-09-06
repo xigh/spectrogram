@@ -2,17 +2,12 @@ package main
 
 import (
 	"image/draw"
+	"math"
 	"math/cmplx"
 )
 
 func drawfft(img draw.Image, samples []float64, rate, bins uint32) {
 	bn := img.Bounds()
-
-	/*
-		bg2 := ParseColor(*BG2)
-		fmt.Printf("bg2: %.8x\n", bg2)
-		draw.Draw(img, bn, image.NewUniform(bg2), image.ZP, draw.Src)
-	*/
 
 	gr := New()
 	gr.Append(ParseColor("000000"))
@@ -33,7 +28,11 @@ func drawfft(img draw.Image, samples []float64, rate, bins uint32) {
 			if n >= 0 && n < len(samples) {
 				s = samples[n]
 			}
-			sub[i] = s
+			tmp := 1.0
+			if *HAMMING {
+				tmp = 0.54 - 0.46*math.Cos(float64(i)*math.Pi*2/float64(len(sub)))
+			}
+			sub[i] = s * tmp
 		}
 
 		var freqs []complex128

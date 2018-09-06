@@ -7,10 +7,16 @@ Taking an audio signal (wav) and converting it into a spectrogram. Written in Go
 
 git clone https://github.com/xigh/spectrogram
 
+# Example
+
+python3 sine_wav.py && ../../xigh/spectrogram/spectrogram -hamming -hideavg -bins=256 sine.wav
+
 # Usage
   ./spectrogram [options] input_file.wav
 
 ```
+-hamming
+    added hamming window support
 -BG0 string
     set background color 0 (default "000000")
 -BG1 string
