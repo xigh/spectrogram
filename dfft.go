@@ -41,11 +41,24 @@ func drawfft(img draw.Image, samples []float64, rate, bins uint32) {
 		} else {
 			freqs = fft(sub)
 		}
+		max := 0.0
 		for y := 0; y < int(bins); y++ {
-			c := freqs[y/2]
+			c := freqs[y]
 			r := cmplx.Abs(c)
-			//r = 30 * math.Log10(math.Abs(r)/10e-6)
-			//r /= float64(bins)
+			max = math.Max(max, r)
+		}
+		for y := 0; y < int(bins); y++ {
+			c := freqs[y]
+			r := 0.0
+			if *MAG {
+				r = math.Pow(real(c), 2) + math.Pow(imag(c), 2)
+			} else {
+				r = cmplx.Abs(c)
+			}
+			if *LOG10 {
+				// TODO
+				r = float64(bins) * math.Log10(r/max)
+			}
 			img.Set(x, int(bins)-y, gr.ColorAt(r))
 		}
 	}

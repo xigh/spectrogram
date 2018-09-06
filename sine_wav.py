@@ -3,7 +3,7 @@ from scipy.io import wavfile
 
 output_name = 'data/sine.wav'
 sample_rate = 16000
-sin_frequencies = [20, 200, 2000]
+sin_frequencies = [7999, 4000, 1000, 1]
 duration = 1
 
 samples = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)

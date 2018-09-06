@@ -27,6 +27,8 @@ var (
 	PREEMP    = flag.Float64("preemp", 0.95, "pre-emphasis")
 	RECTANGLE = flag.Bool("rectangle", false, "use rectangle window")
 	DFT       = flag.Bool("dft", false, "use dft instead of fft")
+	LOG10     = flag.Bool("log10", false, "pretty")
+	MAG       = flag.Bool("mag", false, "mag")
 
 	BG0 = flag.String("BG0", "000", "set background color 0")
 	BG1 = flag.String("BG1", "333", "set background color 1")
