@@ -28,8 +28,8 @@ var (
 	RECTANGLE = flag.Bool("rectangle", false, "use rectangle window")
 	DFT       = flag.Bool("dft", false, "use dft instead of fft")
 
-	BG0 = flag.String("BG0", "000000", "set background color 0")
-	BG1 = flag.String("BG1", "445577", "set background color 1")
+	BG0 = flag.String("BG0", "000", "set background color 0")
+	BG1 = flag.String("BG1", "333", "set background color 1")
 
 	FG0 = flag.String("FG0", "0972a2", "set forground color 0")
 	FG1 = flag.String("FG1", "6b5f7e", "set forground color 1")

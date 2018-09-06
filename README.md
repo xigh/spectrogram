@@ -1,4 +1,5 @@
 # Spectrogram
+
 Taking an audio signal (wav) and converting it into a spectrogram. Written in Go programming language.
 
 ![example](data/mediawen16k.png "example of spectrogram")
@@ -24,7 +25,7 @@ python3 sine_wav.py && ../../xigh/spectrogram/spectrogram -hamming -hideavg -bin
 -BG0 string
     set background color 0 (default "000000")
 -BG1 string
-    set background color 1 (default "444444")
+    set background color 1 (default "333")
 -BG2 string
     set background color 2 (default "447744")
 -FG0 string
