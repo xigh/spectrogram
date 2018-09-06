@@ -12,7 +12,7 @@ git clone https://github.com/xigh/spectrogram
 
 python3 sine_wav.py && ../../xigh/spectrogram/spectrogram -hamming -hideavg -bins=256 sine.wav
 
-![example](data/sine.png "example of sine spectrogram")
+![example](data/sine2.png "example of sine spectrogram")
 
 # Usage
   ./spectrogram [options] input_file.wav
