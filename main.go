@@ -21,13 +21,12 @@ var (
 	HIDEAVG    = flag.Bool("hideavg", false, "hide average")
 	HIDERULERS = flag.Bool("hiderulers", false, "hide rulers")
 
-	BINS = flag.Int("bins", 512, "set freq bins")
-
 	OUT = flag.String("out", "out.png", "set output filename")
 
-	HAMMING = flag.Bool("hamming", false, "use hamming window")
-
-	DFT = flag.Bool("dft", false, "use dft instead of fft")
+	BINS      = flag.Int("bins", 512, "set freq bins")
+	PREEMP    = flag.Float64("preemp", 0.95, "pre-emphasis")
+	RECTANGLE = flag.Bool("rectangle", false, "use rectangle window")
+	DFT       = flag.Bool("dft", false, "use dft instead of fft")
 
 	BG0 = flag.String("BG0", "000000", "set background color 0")
 	BG1 = flag.String("BG1", "445577", "set background color 1")
@@ -83,6 +82,12 @@ func main() {
 
 	samples := wav.GetSamplesAt(o, l)
 	fmt.Printf("samples: %.2d\n", len(samples))
+
+	if *PREEMP > 0 {
+		for i := len(samples) - 1; i > 0; i-- {
+			samples[i] = samples[i] - *PREEMP*samples[i-1]
+		}
+	}
 
 	bounds := image.Rect(-20, -20, *WIDTH+20, *HEIGHT+40+*BINS)
 	img := NewImage128(bounds)

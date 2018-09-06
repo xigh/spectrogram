@@ -17,8 +17,10 @@ python3 sine_wav.py && ../../xigh/spectrogram/spectrogram -hamming -hideavg -bin
   ./spectrogram [options] input_file.wav
 
 ```
--hamming
-    added hamming window support
+-preemp float64
+    set pre-emphasis parameter (0 means no pre-emp)
+-rectangle
+    disable hamming window support
 -BG0 string
     set background color 0 (default "000000")
 -BG1 string

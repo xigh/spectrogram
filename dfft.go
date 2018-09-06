@@ -29,7 +29,7 @@ func drawfft(img draw.Image, samples []float64, rate, bins uint32) {
 				s = samples[n]
 			}
 			tmp := 1.0
-			if *HAMMING {
+			if !*RECTANGLE {
 				tmp = 0.54 - 0.46*math.Cos(float64(i)*math.Pi*2/float64(len(sub)))
 			}
 			sub[i] = s * tmp
