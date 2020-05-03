@@ -6,7 +6,9 @@ import (
 	"image"
 	"image/draw"
 	"log"
-	"time"
+	"os"
+
+	"github.com/xigh/go-wavreader"
 )
 
 var (
@@ -48,42 +50,28 @@ func main() {
 
 	name := flag.Arg(0)
 
-	wav, err := OpenWav(name)
+	r, err := os.Open(name)
 	if err != nil {
-		log.Fatalf("OpenWav failed: %v", err)
+		log.Fatal(err)
 	}
-	defer wav.Close()
+	defer r.Close()
 
-	count := wav.GetSampleCount()
-	rate := wav.GetSampleRate()
-
-	duration := time.Duration((float64(count) / float64(rate)) * float64(time.Second))
-	ft := "unknown"
-	switch wav.GetFormat() {
-	case 1:
-		ft = "signed"
+	wr, err := wavreader.New(r)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	o := uint32(*OFFSET)
+	fmt.Printf("%s: %dHz, %d channels, %d samples, %v\n",
+		name, wr.Rate(), wr.Chans(), wr.Len(), wr.Duration)
 
-	l := uint32(*LENGTH)
-	if l == 0 {
-		l = count
+	samples := make([]float64, wr.Len())
+	for i := uint64(0); i < wr.Len(); i++ {
+		s, err := wr.At(0, i)
+		if err != nil {
+			log.Fatal(err)
+		}
+		samples[i] = float64(s)
 	}
-
-	if o > count {
-		log.Fatalf("empty duration")
-	}
-
-	if o+l > count {
-		l = count - o
-	}
-
-	fmt.Printf("%s: %dHz %d bits [%s], %d channels, %d/%d samples, %v\n",
-		name, rate, wav.GetBits(), ft, wav.GetChannels(), l, count, duration)
-
-	samples := wav.GetSamplesAt(o, l)
-	fmt.Printf("samples: %.2d\n", len(samples))
 
 	if *PREEMP > 0 {
 		for i := len(samples) - 1; i > 0; i-- {
@@ -104,7 +92,7 @@ func main() {
 
 	fmt.Println("drawfft:")
 	i1 := img.Sub(image.Rect(0, *HEIGHT+20, *WIDTH, *HEIGHT+20+*BINS))
-	drawfft(i1, samples, rate, uint32(*BINS))
+	drawfft(i1, samples, wr.Rate(), uint32(*BINS))
 
 	a0, s0 := img.Stats()
 	fmt.Printf("img stats: %d reads, %d writes\n", a0, s0)
