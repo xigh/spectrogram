@@ -12,20 +12,20 @@ import (
 )
 
 var (
-	OFFSET = flag.Int("offset", 0, "sey begin of samples")
-	LENGTH = flag.Int("length", 0, "set number of samples [0 means all]")
+	OFFSET = flag.Uint64("offset", 0, "sey begin of samples")
+	LENGTH = flag.Uint64("length", 0, "set number of samples [0 means all]")
 
 	RATIO = flag.Float64("ratio", 0.8, "set ratio")
 
-	WIDTH  = flag.Int("width", 2048, "set width")
-	HEIGHT = flag.Int("height", 450, "set height")
+	WIDTH  = flag.Uint("width", 2048, "set width")
+	HEIGHT = flag.Uint("height", 450, "set height")
 
 	HIDEAVG    = flag.Bool("hideavg", false, "hide average")
 	HIDERULERS = flag.Bool("hiderulers", false, "hide rulers")
 
 	OUT = flag.String("out", "out.png", "set output filename")
 
-	BINS      = flag.Int("bins", 512, "set freq bins")
+	BINS      = flag.Uint("bins", 512, "set freq bins")
 	PREEMP    = flag.Float64("preemp", 0.95, "pre-emphasis")
 	RECTANGLE = flag.Bool("rectangle", false, "use rectangle window")
 	DFT       = flag.Bool("dft", false, "use dft instead of fft")
@@ -62,11 +62,22 @@ func main() {
 	}
 
 	fmt.Printf("%s: %dHz, %d channels, %d samples, %v\n",
-		name, wr.Rate(), wr.Chans(), wr.Len(), wr.Duration)
+		name, wr.Rate(), wr.Chans(), wr.Len(), wr.Duration())
 
-	samples := make([]float64, wr.Len())
-	for i := uint64(0); i < wr.Len(); i++ {
-		s, err := wr.At(0, i)
+	start := *OFFSET
+	if start > wr.Len() {
+		log.Fatalf("offset bigger than file")
+	}
+
+	length := *LENGTH
+	if start+length > wr.Len() {
+		log.Printf("length too long\n")
+		length = wr.Len() - start
+	}
+
+	samples := make([]float64, length)
+	for i := uint64(0); i < length; i++ {
+		s, err := wr.At(0, start+i)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -79,7 +90,11 @@ func main() {
 		}
 	}
 
-	bounds := image.Rect(-20, -20, *WIDTH+20, *HEIGHT+40+*BINS)
+	W := int(*WIDTH)
+	H := int(*HEIGHT)
+	B := int(*BINS)
+
+	bounds := image.Rect(-20, -20, W+20, H+40+B)
 	img := NewImage128(bounds)
 
 	bg0 := ParseColor(*BG0)
@@ -87,12 +102,12 @@ func main() {
 	draw.Draw(img, img.Bounds(), image.NewUniform(bg0), image.ZP, draw.Src)
 
 	fmt.Println("drawwav:")
-	i0 := img.Sub(image.Rect(0, 0, *WIDTH, *HEIGHT))
+	i0 := img.Sub(image.Rect(0, 0, W, H))
 	drawwav(i0, samples)
 
 	fmt.Println("drawfft:")
-	i1 := img.Sub(image.Rect(0, *HEIGHT+20, *WIDTH, *HEIGHT+20+*BINS))
-	drawfft(i1, samples, wr.Rate(), uint32(*BINS))
+	i1 := img.Sub(image.Rect(0, H+20, W, H+20+B))
+	drawfft(i1, samples, wr.Rate(), uint32(B))
 
 	a0, s0 := img.Stats()
 	fmt.Printf("img stats: %d reads, %d writes\n", a0, s0)
